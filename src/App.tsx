@@ -1,4 +1,4 @@
-import { AlignLeft, HeartCrackIcon, Link2, NavigationIcon, Save, SquarePen, Tag, X } from "lucide-react"
+import { AlignLeft, HeartCrackIcon, Link2, NavigationIcon, Save, SquarePen, Tag, Trash2, X } from "lucide-react"
 import { useState } from "react"
 import Favicon from "./assets/favicon.png"
 import AlertBox from "./components/alertBox/AlertBox"
@@ -35,7 +35,7 @@ const App = () => {
     }
     
     const linkToAdd = {
-      id: links.length,
+      id: Math.floor(Math.random() * 1000),
       createdAt: dataAtualFormatada(),
       url: linkUrl,
       favicon: `http://www.google.com/s2/favicons?domain=${linkUrl}`,
@@ -58,6 +58,14 @@ const App = () => {
     } else {
       alert("Digite um nome e uma url!")
     }
+  }
+
+  const deleteLink = (id: number) => {
+    setLinks(state => {
+      const newState = state.filter(link => link.id !== id)
+      localStorage.setItem("LINKS-DB", JSON.stringify(newState))
+      return newState
+    })
   }
 
   const resetInputs = () => {
@@ -127,6 +135,16 @@ const App = () => {
             </button>
           </div>
         </div>
+        <div className="flex justify-center items-center">
+            {links.map(link => (
+              <div className="flex flex-col justify-center items-center m-2">
+                <p className="truncate w-20">{link.name}</p>
+                <a href={link.url} target="_blank" title={link.name}>
+                  <img className="w-6" src={link.favicon} alt={link.name} />
+                </a>
+              </div>
+            ))}
+        </div>
       </div>
       {success && (
         <AlertBox />
@@ -184,6 +202,15 @@ const App = () => {
                   title={"Copiar " + link.url}
                 >
                   <Link2 size={20}/>
+                </button>
+                <button 
+                  className="bg-transparent p-0 hover:text-gray-300"
+                  onClick={() => {
+                    deleteLink(link.id)}
+                  }  
+                  title={"Deletar " + link.url}
+                >
+                  <Trash2 size={20}/>
                 </button>
               </div>
             ))}
